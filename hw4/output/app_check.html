@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Customs &middot; App Check</title>
+<style>
+  :root {
+    --navy: #00356b;
+    --navy-deep: #002548;
+    --gold: #c9b273;
+    --ink: #1b1f26;
+    --muted: #5d6673;
+    --line: #dfe4ea;
+    --tint: #f4f6f9;
+    --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: #fff;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 3rem 1.5rem 2.6rem;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 1.5rem; }
+  header.top .wrap { padding: 0 1.5rem; }
+  .eyebrow {
+    font-size: .72rem; font-weight: 600; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--gold); margin: 0 0 .7rem;
+  }
+  h1 { font-family: var(--serif); font-size: 2.6rem; margin: 0 0 .6rem; font-weight: 600; }
+  header.top p { margin: 0; max-width: 62ch; color: rgba(255,255,255,.84); }
+  .meta {
+    margin-top: 1.6rem; padding-top: 1.2rem;
+    border-top: 1px solid rgba(255,255,255,.2);
+    font-size: .84rem; color: rgba(255,255,255,.72);
+  }
+  .meta code { color: #fff; }
+
+  .summary { background: var(--tint); border-bottom: 1px solid var(--line); padding: 2rem 0; }
+  .summary table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  .summary th {
+    text-align: left; font-size: .7rem; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--muted); padding: 0 .8rem .6rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .summary td { padding: .7rem .8rem .7rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .summary tr:last-child td { border-bottom: none; }
+  .pass {
+    display: inline-block; padding: .18rem .6rem; border-radius: 999px;
+    background: var(--navy); color: #fff;
+    font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  }
+
+  section.check { padding: 3.4rem 0; border-bottom: 1px solid var(--line); }
+  section.check:last-of-type { border-bottom: none; }
+  .num {
+    display: inline-grid; place-items: center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--navy); color: #fff;
+    font-size: .85rem; font-weight: 700; margin-right: .7rem;
+    vertical-align: middle;
+  }
+  h2 {
+    font-family: var(--serif); font-size: 1.85rem; font-weight: 600;
+    color: var(--navy); margin: 0 0 .5rem;
+  }
+  .asked {
+    margin: 0 0 1.4rem; font-size: .95rem; color: var(--muted);
+  }
+  .asked em { color: var(--ink); font-style: italic; }
+  figure { margin: 0; }
+  figure img {
+    display: block; width: 100%; height: auto;
+    border: 1px solid var(--line); border-radius: 6px;
+    box-shadow: 0 12px 34px rgba(0,37,72,.12);
+  }
+  figcaption {
+    margin-top: 1rem; padding-left: 1rem;
+    border-left: 3px solid var(--gold);
+    font-size: .98rem; color: #2c333d;
+  }
+  .proof {
+    margin-top: 1.2rem; padding: 1rem 1.2rem;
+    background: var(--tint); border-radius: 4px;
+    font-size: .88rem; color: var(--muted);
+  }
+  .proof strong { color: var(--navy); }
+  .proof code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: .85em; color: var(--ink);
+  }
+  footer {
+    background: var(--navy-deep); color: rgba(255,255,255,.6);
+    padding: 2.4rem 0; font-size: .82rem;
+  }
+  @media (max-width: 640px) { h1 { font-size: 2rem; } h2 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Campus Customs &middot; MGT 409</p>
+    <h1>App Check</h1>
+    <p>
+      Three checks run against the live site, each one photographed as it happened.
+      Every figure shown was compared against <code>data/campus_customs.db</code> afterwards.
+    </p>
+    <p class="meta">
+      Front end <code>http://localhost:5174</code> &nbsp;&middot;&nbsp;
+      API <code>http://localhost:8000</code> &nbsp;&middot;&nbsp;
+      Signed in as <code>test@campuscustoms.yale.edu</code> &nbsp;&middot;&nbsp;
+      Browser: Chrome, 1440&times;1000
+    </p>
+  </div>
+</header>
+
+<div class="summary">
+  <div class="wrap">
+    <table>
+      <thead>
+        <tr><th style="width:2.4rem">#</th><th>Check</th><th>What it proves</th><th style="width:5rem">Result</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Chat checks a stock level</td>
+          <td>The assistant reads real stock and price from the database</td>
+          <td><span class="pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Category question draws cards</td>
+          <td>A chat search puts product cards on the page itself</td>
+          <td><span class="pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Star rating when buying</td>
+          <td>The Problem&nbsp;9 rating feature works in the live app</td>
+          <td><span class="pass">Pass</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="check">
+    <h2><span class="num">1</span>Chat checking the inventory level of an item</h2>
+    <p class="asked">Asked on the product page: <em>&ldquo;Is this available in XS, and what does it cost?&rdquo;</em></p>
+
+    <figure>
+      <img src="app_check_images/1_inventory_check.png"
+           alt="The Baseball Left Chest Crewneck product page with the chat panel open. The assistant answers that it is not available in XS, costs $58, and remains in S, M, L and XXL.">
+      <figcaption>
+        The assistant answers &ldquo;not available in XS. It costs $58, and the remaining sizes
+        are S, M, L, and XXL&rdquo; &mdash; and the page behind it agrees, with XS and XL struck
+        through and the stock line reading S&nbsp;(15), M&nbsp;(5), L&nbsp;(25), XXL&nbsp;(25).
+        The chat, the product page and the database are all telling the same story.
+      </figcaption>
+    </figure>
+
+    <p class="proof">
+      <strong>Checked against the database.</strong>
+      <code>SELECT size, quantity FROM inventory WHERE product_id='baseball-left-chest-crewneck'</code>
+      returns XS&nbsp;0, S&nbsp;15, M&nbsp;5, L&nbsp;25, XL&nbsp;0, XXL&nbsp;25, and the catalogue
+      price is 58.0 &mdash; exactly what was said. Note also that the question said only
+      &ldquo;this&rdquo;: the agent knew which garment was meant because the page context travels
+      with every message.
+    </p>
+  </section>
+
+  <section class="check">
+    <h2><span class="num">2</span>Dynamic search-result cards after a category question</h2>
+    <p class="asked">Asked from the home page: <em>&ldquo;What hoodies do you have?&rdquo;</em></p>
+
+    <figure>
+      <img src="app_check_images/2_chat_search_cards.png"
+           alt="The home page showing a band headed Hoodies with four product cards, each with a photograph, name, short description, price and sizes ready.">
+      <figcaption>
+        The four matching hoodies appear <em>on the page</em>, not as text in the chat, under a
+        heading the assistant chose and the shopper&rsquo;s own question quoted back. Each card
+        carries its photograph, name, short description, price and how many sizes are ready.
+      </figcaption>
+    </figure>
+
+    <p class="proof">
+      <strong>Why this is the real thing.</strong> The agent returns only product ids; the server
+      looks each one up and builds the cards from the database, so no price or stock figure on a
+      card is written by the model. These are the same cards the catalogue uses, so clicking any
+      of them opens that product&rsquo;s own page.
+    </p>
+  </section>
+
+  <section class="check">
+    <h2><span class="num">3</span>A usability feature: the star rating at the moment of buying</h2>
+    <p class="asked">On the Champion Full Zip Hood, size L chosen, then <em>Buy</em> pressed.</p>
+
+    <figure>
+      <img src="app_check_images/3_star_rating.png"
+           alt="The buy step on the Champion Full Zip Hood, headed Before we wrap it, asking how the shopper would rate it, with four of five stars lit and Handsome Dan's ten percent discount applied.">
+      <figcaption>
+        Pressing Buy does not complete the order &mdash; it first asks
+        &ldquo;How would you rate the Champion Full Zip Hood?&rdquo;, with four of the five stars
+        lit. Handsome Dan&rsquo;s 10% code is applied alongside, taking $88.00 down to $79.20.
+      </figcaption>
+    </figure>
+
+    <p class="proof">
+      <strong>What happens on Complete order.</strong> The purchase is written to
+      <code>purchases</code> and the rating to <code>product_ratings</code>, carrying the
+      <code>purchase_id</code> &mdash; so every rating in the database belongs to someone who
+      actually bought the garment. The average then appears on the product page for the next
+      shopper.
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Campus Customs &mdash; a course project for MGT 409, Yale School of Management.
+    Not affiliated with Yale University.
+  </div>
+</footer>
+
+</body>
+</html>
