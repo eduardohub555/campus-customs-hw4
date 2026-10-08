@@ -178,7 +178,7 @@ Two files under `backend/`:
 
 | File | Responsibility |
 | --- | --- |
-| `db.py` | Read-only SQLite access, plus the normalisation the raw tables need. |
+| `tools.py` | SQLite access and the normalisation the raw tables need, alongside the agent's tools. |
 | `main.py` | The FastAPI app: routes, CORS, and the static mount for product photos. |
 
 The database is opened read-only (`file:...?mode=ro`), so nothing the website does can alter the catalogue.
@@ -192,7 +192,7 @@ The database is opened read-only (`file:...?mode=ro`), so nothing the website do
 | `POST /api/chat` | **Stub.** Echoes a fixed "not wired up yet" reply and an empty product list. |
 | `GET /media/products/{file}` | The product photo, served off disk from `data/products/`. |
 
-`db.py` does three jobs beyond reading rows, each of them a direct answer to a problem found in section 1:
+The data layer in `tools.py` does three jobs beyond reading rows, each of them a direct answer to a problem found in section 1:
 
 1. **Category normalisation.** `garment_type` has 22 spellings across 102 products, so filtering on it directly drops results. `categorise()` matches keywords in priority order and collapses all 22 into five buckets: Hoodies (27), Sweatshirts (29), T-Shirts (26), Quarter-Zips (12), Jackets (8). Order matters — "full-zip hooded sweatshirt" must land in Hoodies, not Jackets, so the hood rule is checked first. Nothing falls through to `Other`.
 2. **JSON parsing.** `colors` and `search_tags` are JSON inside TEXT columns. They are parsed once in the backend and tolerate both the empty-array and malformed cases, so the front end always receives a real list.
@@ -278,7 +278,7 @@ Those are the real values from the account created through the site on 2026-10-0
 
 **Nothing else is kept.** No password, no password hint, no security question, no session token. Sessions live in the API process's memory and never touch the database, so a copy of `campus_customs.db` contains nothing that can be used to sign in as somebody.
 
-What the browser is allowed to see is narrower still: the API returns `id`, `name`, `email`, `first_name`, `last_name` and `created_at`. `password_hash` is filtered out in one place (`_public()` in `backend/auth.py`), so no endpoint can leak it by accident.
+What the browser is allowed to see is narrower still: the API returns `id`, `name`, `email`, `first_name`, `last_name` and `created_at`. `password_hash` is filtered out in one place (`_public()` in `backend/main.py`), so no endpoint can leak it by accident.
 
 ### 3.2 How passwords are protected
 
@@ -337,7 +337,7 @@ The create-account form shows the three password rules as a live checklist that 
 
 A token is 32 random bytes from `secrets.token_urlsafe`, held in a dictionary in the API process and kept in the browser's `localStorage`. The site restores the session on load by calling `/api/auth/me`; a token the server no longer recognises is discarded rather than retried. Restarting the API signs everybody out — acceptable for a course project, and it keeps session state out of the database entirely.
 
-Writes are confined: `db.connect()` opens the database **read-only** and is what every catalogue route uses. Only `db.connect_rw()` can write, and registration is the only caller.
+Writes are confined: `connect()` opens the database **read-only** and is what every catalogue route uses. Only `connect_rw()` can write.
 
 ### 3.5 The account created through the site
 
@@ -735,7 +735,7 @@ Each exchange writes two rows, one for the question and one for the answer, so t
 
 **History is keyed on `user_id`, not on name or email.** A name is not unique and an email can in principle be changed; the integer primary key cannot, and it is already the foreign key the table was built around. The name and email the agent sees are for *addressing* and *recognising* the shopper, not for finding their rows.
 
-**Guests leave nothing.** Every function in `backend/history.py` takes a `user_id` as its first argument, so there is no code path that can store a turn without one. The route only calls `record_turn` inside `if user:`. This is a structural guarantee rather than a remembered check — verified by sending three messages as a guest and counting the table before and after: 38 rows, then 38 rows.
+**Guests leave nothing.** Every chat-history function in `main.py` takes a `user_id` as its first argument, so there is no code path that can store a turn without one. The route only calls `record_turn` inside `if user:`. This is a structural guarantee rather than a remembered check — verified by sending three messages as a guest and counting the table before and after: 38 rows, then 38 rows.
 
 ### 7.2 What comes back, and how
 
@@ -769,7 +769,7 @@ Assembled per request into `ShopperContext`, the agent's deps:
 
 For a guest every one of these is `None`.
 
-**The password hash is never among them.** It is stripped by `auth._public()` before any of this is assembled, so there is no path by which a credential could reach the model, and no tool that can read the `users` table at all.
+**The password hash is never among them.** It is stripped by `_public()` before any of this is assembled, so there is no path by which a credential could reach the model, and no tool that can read the `users` table at all.
 
 **On the email.** The shop assistant knows the signed-in shopper's email address. This is a deliberate decision: the agent should know who it is speaking to. It is protected in two independent layers.
 
@@ -845,7 +845,7 @@ Six improvements from Problem 9. The reasoning for each — what it is and why i
 
 ### 8.1 New tables
 
-Applied by `backend/schema.py` (`python schema.py`), which is idempotent and never touches the seeded tables.
+Applied by `python main.py --init-db`, which is idempotent and never touches the seeded tables.
 
 | Table | Holds | Notable constraints |
 | --- | --- | --- |
@@ -857,11 +857,10 @@ The `purchase_id` foreign key is what makes a rating traceable to a real purchas
 
 ### 8.2 New modules
 
-| File | Responsibility |
+| Where | Responsibility |
 | --- | --- |
-| `backend/perks.py` | Discounts, purchases and ratings. Pure SQLite — no model calls. |
-| `backend/mascot.py` | Handsome Dan's discount line, on the light model, with a written fallback. |
-| `backend/schema.py` | The migration. |
+| `backend/tools.py` | Discounts, purchases and ratings. Pure SQLite — no model calls. |
+| `backend/main.py` | Handsome Dan's discount line, on the light model, with a written fallback; and the `--init-db` migration. |
 | `frontend/src/components/HandsomeDan.tsx` | The bulldog, in HTML/CSS. |
 | `frontend/src/components/BuyPanel.tsx` | The buy step that asks for a rating. |
 
@@ -1019,7 +1018,7 @@ Never assume, and never imply knowledge of: their size, that they are buying, wh
 | Layer | What it does |
 | --- | --- |
 | Architecture | **No tool can read the `users` table.** The agent has no route to any account. |
-| Deps | The password hash is stripped by `auth._public()` before deps are assembled — it never exists in the agent's world. |
+| Deps | The password hash is stripped by `_public()` before deps are assembled — it never exists in the agent's world. |
 | Prompt | The email is for identity only: never stated, repeated, confirmed or denied. |
 | Server | `_redact_account_details()` replaces the signed-in shopper's address with `[withheld]` in any reply before it is sent **or stored**. |
 
@@ -1146,8 +1145,8 @@ First-time setup:
 
 ```
 python3 -m venv .venv && .venv/bin/pip install -r backend/requirements.txt
-cd backend && ../.venv/bin/python schema.py      # the Problem 9 tables
-cd backend && ../.venv/bin/python cutouts.py     # the floating product images
+cd backend && ../.venv/bin/python main.py --init-db   # the Problem 9 tables
+cd backend && ../.venv/bin/python main.py --cutouts   # the floating product images
 cd frontend && npm install
 ```
 

@@ -572,5 +572,223 @@
       "champion-full-zip-hood"
     ],
     "duration_seconds": 6.58
+  },
+  {
+    "time": "2026-10-08T03:11:46+00:00",
+    "shopper": "user:1",
+    "model": "gpt-5.6-luna",
+    "message": "What hoodies do you have?",
+    "page": "{\"path\": \"/\", \"product_id\": null, \"category\": null}",
+    "steps": [
+      {
+        "step": 1,
+        "tool": "search_catalogue",
+        "args": "{\"query\":\"hoodies\",\"category\":\"Hoodies\",\"max_results\":4}",
+        "result": "[\"product_id='basic-hoodie-big-yale' name='Basic Hoodie Big Yale' category='Hoodies' garment_type='pullover hoodie' description='Navy pullover hoodie with a front kangaroo pocket, drawstring hood, and large white YALE..."
+      },
+      {
+        "step": 2,
+        "tool": "final_result",
+        "args": "{\"reply\":\"We carry four hoodies here, including pullover and full-zip styles in navy and charcoal gray. The cards below show the available options; more are on the Products page.\",\"product_ids\":[\"basic-hoodie-big-yale...",
+        "result": "Final result processed."
+      }
+    ],
+    "tools_called": [
+      "search_catalogue"
+    ],
+    "stop_reason": "completed",
+    "model_requests": 2,
+    "reply": "We carry four hoodies here, including pullover and full-zip styles in navy and charcoal gray. The cards below show the available options; more are on the Products page.",
+    "products_shown": [
+      "basic-hoodie-big-yale",
+      "brooks-brothers-double-knit-full-zip-hoodie-yale",
+      "champion-full-zip-hood",
+      "champion-reverse-weave-hoodie-1"
+    ],
+    "duration_seconds": 5.2
+  },
+  {
+    "time": "2026-10-08T03:11:55+00:00",
+    "shopper": "user:1",
+    "model": "gpt-5.6-luna",
+    "message": "Is this available in XS?",
+    "page": "{\"path\": \"/products/baseball-left-chest-crewneck\", \"product_id\": \"baseball-left-chest-crewneck\", \"category\": null}",
+    "steps": [
+      {
+        "step": 1,
+        "tool": "check_size",
+        "args": "{\"product_id\":\"baseball-left-chest-crewneck\",\"size\":\"XS\"}",
+        "result": "product_id='baseball-left-chest-crewneck' product_name='Baseball Left Chest Crewneck' size='XS' available=False quantity=0 other_sizes_in_stock=['S', 'M', 'L', 'XXL']"
+      },
+      {
+        "step": 2,
+        "tool": "final_result",
+        "args": "{\"reply\":\"The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.\",\"product_ids\":[],\"result_title\":null}",
+        "result": "Final result processed."
+      }
+    ],
+    "tools_called": [
+      "check_size"
+    ],
+    "stop_reason": "completed",
+    "model_requests": 2,
+    "reply": "The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.",
+    "products_shown": [],
+    "duration_seconds": 4.57
+  },
+  {
+    "time": "2026-10-08T03:12:37+00:00",
+    "shopper": "user:1",
+    "model": "gpt-5.6-luna",
+    "message": "What hoodies do you have?",
+    "page": "{\"path\": \"/\", \"product_id\": null, \"category\": null}",
+    "steps": [
+      {
+        "step": 1,
+        "tool": "search_catalogue",
+        "args": "{\"query\":\"hoodies\",\"category\":\"Hoodies\",\"max_results\":4}",
+        "result": "[\"product_id='basic-hoodie-big-yale' name='Basic Hoodie Big Yale' category='Hoodies' garment_type='pullover hoodie' description='Navy pullover hoodie with a front kangaroo pocket, drawstring hood, and large white YALE..."
+      },
+      {
+        "step": 2,
+        "tool": "final_result",
+        "args": "{\"reply\":\"We carry four hoodies, including navy pullover styles and full-zip options in navy or charcoal gray. The cards below show the available choices; more are on the Products page.\",\"product_ids\":[\"basic-hoodie-b...",
+        "result": "Final result processed."
+      }
+    ],
+    "tools_called": [
+      "search_catalogue"
+    ],
+    "stop_reason": "completed",
+    "model_requests": 2,
+    "reply": "We carry four hoodies, including navy pullover styles and full-zip options in navy or charcoal gray. The cards below show the available choices; more are on the Products page.",
+    "products_shown": [
+      "basic-hoodie-big-yale",
+      "brooks-brothers-double-knit-full-zip-hoodie-yale",
+      "champion-full-zip-hood",
+      "champion-reverse-weave-hoodie-1"
+    ],
+    "duration_seconds": 4.7
+  },
+  {
+    "time": "2026-10-08T03:12:45+00:00",
+    "shopper": "user:1",
+    "model": "gpt-5.6-luna",
+    "message": "Is this available in XS?",
+    "page": "{\"path\": \"/products/baseball-left-chest-crewneck\", \"product_id\": \"baseball-left-chest-crewneck\", \"category\": null}",
+    "steps": [
+      {
+        "step": 1,
+        "tool": "check_size",
+        "args": "{\"product_id\":\"baseball-left-chest-crewneck\",\"size\":\"XS\"}",
+        "result": "product_id='baseball-left-chest-crewneck' product_name='Baseball Left Chest Crewneck' size='XS' available=False quantity=0 other_sizes_in_stock=['S', 'M', 'L', 'XXL']"
+      },
+      {
+        "step": 2,
+        "tool": "final_result",
+        "args": "{\"reply\":\"The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.\",\"product_ids\":[],\"result_title\":null}",
+        "result": "Final result processed."
+      }
+    ],
+    "tools_called": [
+      "check_size"
+    ],
+    "stop_reason": "completed",
+    "model_requests": 2,
+    "reply": "The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.",
+    "products_shown": [],
+    "duration_seconds": 4.96
+  },
+  {
+    "time": "2026-10-08T03:19:08+00:00",
+    "shopper": "user:1",
+    "model": "gpt-5.6-luna",
+    "message": "Is this available in XS?",
+    "page": "{\"path\": \"/products/baseball-left-chest-crewneck\", \"product_id\": \"baseball-left-chest-crewneck\", \"category\": null}",
+    "steps": [
+      {
+        "step": 1,
+        "tool": "check_size",
+        "args": "{\"product_id\":\"baseball-left-chest-crewneck\",\"size\":\"XS\"}",
+        "result": "product_id='baseball-left-chest-crewneck' product_name='Baseball Left Chest Crewneck' size='XS' available=False quantity=0 other_sizes_in_stock=['S', 'M', 'L', 'XXL']"
+      },
+      {
+        "step": 2,
+        "tool": "final_result",
+        "args": "{\"reply\":\"The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.\",\"product_ids\":[],\"result_title\":null}",
+        "result": "Final result processed."
+      }
+    ],
+    "tools_called": [
+      "check_size"
+    ],
+    "stop_reason": "completed",
+    "model_requests": 2,
+    "reply": "The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.",
+    "products_shown": [],
+    "duration_seconds": 7.94
+  },
+  {
+    "time": "2026-10-08T03:21:05+00:00",
+    "shopper": "user:1",
+    "model": "gpt-5.6-luna",
+    "message": "What hoodies do you have?",
+    "page": "{\"path\": \"/\", \"product_id\": null, \"category\": null}",
+    "steps": [
+      {
+        "step": 1,
+        "tool": "search_catalogue",
+        "args": "{\"query\":\"hoodies\",\"category\":\"Hoodies\",\"max_results\":4}",
+        "result": "[\"product_id='basic-hoodie-big-yale' name='Basic Hoodie Big Yale' category='Hoodies' garment_type='pullover hoodie' description='Navy pullover hoodie with a front kangaroo pocket, drawstring hood, and large white YALE..."
+      },
+      {
+        "step": 2,
+        "tool": "final_result",
+        "args": "{\"reply\":\"We carry four hoodies, including navy pullover styles and full-zip options in navy or charcoal gray. The cards below show the available choices; more are on the Products page.\",\"product_ids\":[\"basic-hoodie-b...",
+        "result": "Final result processed."
+      }
+    ],
+    "tools_called": [
+      "search_catalogue"
+    ],
+    "stop_reason": "completed",
+    "model_requests": 2,
+    "reply": "We carry four hoodies, including navy pullover styles and full-zip options in navy or charcoal gray. The cards below show the available choices; more are on the Products page.",
+    "products_shown": [
+      "basic-hoodie-big-yale",
+      "brooks-brothers-double-knit-full-zip-hoodie-yale",
+      "champion-full-zip-hood",
+      "champion-reverse-weave-hoodie-1"
+    ],
+    "duration_seconds": 4.61
+  },
+  {
+    "time": "2026-10-08T03:21:13+00:00",
+    "shopper": "user:1",
+    "model": "gpt-5.6-luna",
+    "message": "Is this available in XS?",
+    "page": "{\"path\": \"/products/baseball-left-chest-crewneck\", \"product_id\": \"baseball-left-chest-crewneck\", \"category\": null}",
+    "steps": [
+      {
+        "step": 1,
+        "tool": "check_size",
+        "args": "{\"product_id\":\"baseball-left-chest-crewneck\",\"size\":\"XS\"}",
+        "result": "product_id='baseball-left-chest-crewneck' product_name='Baseball Left Chest Crewneck' size='XS' available=False quantity=0 other_sizes_in_stock=['S', 'M', 'L', 'XXL']"
+      },
+      {
+        "step": 2,
+        "tool": "final_result",
+        "args": "{\"reply\":\"The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.\",\"product_ids\":[],\"result_title\":null}",
+        "result": "Final result processed."
+      }
+    ],
+    "tools_called": [
+      "check_size"
+    ],
+    "stop_reason": "completed",
+    "model_requests": 2,
+    "reply": "The Baseball Left Chest Crewneck is not available in XS. The remaining sizes are S, M, L, and XXL.",
+    "products_shown": [],
+    "duration_seconds": 4.28
   }
 ]

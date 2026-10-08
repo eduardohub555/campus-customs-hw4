@@ -15,7 +15,7 @@ The original design was already doing its job, so this pass added rather than re
 
 ### What changed
 
-The catalogue photographs were shot on flat black or flat white studio backdrops. Those backdrops have been removed: `backend/cutouts.py` writes a transparent PNG for each of the 102 garments, and the API serves those in place of the originals.
+The catalogue photographs were shot on flat black or flat white studio backdrops. Those backdrops have been removed: `python main.py --cutouts` writes a transparent PNG for each of the 102 garments, and the API serves those in place of the originals.
 
 The card then stopped being a box. The bordered grey tile is gone, replaced by a soft radial field of light — white at the centre, easing to pale blue at the edges — with the garment sitting on top in `object-fit: contain` and carrying its own `drop-shadow`. On hover it lifts six pixels and the shadow deepens.
 

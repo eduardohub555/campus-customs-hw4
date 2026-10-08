@@ -33,12 +33,12 @@ cd frontend && npm install && cd ..
 
 # 3. Tables added in Problem 9 (discounts, purchases, ratings).
 #    Safe to re-run; it never touches the seeded tables.
-cd backend && ../.venv/bin/python schema.py && cd ..
+cd backend && ../.venv/bin/python main.py --init-db && cd ..
 
 # 4. Lift the product photos off their backgrounds so garments float on the
 #    page. Writes data/products_cutout/. Takes about a minute for 102 images.
 #    Optional — the site falls back to the original photos without it.
-cd backend && ../.venv/bin/python cutouts.py && cd ..
+cd backend && ../.venv/bin/python main.py --cutouts && cd ..
 ```
 
 ### The API key
@@ -87,30 +87,23 @@ hw4/
 ├── README.md
 ├── frontend/              Vite + React + TypeScript
 ├── backend/
-│   ├── main.py            FastAPI app — the one to run with uvicorn
-│   ├── agent.py           the agent: prompt + model + tools
-│   ├── tools.py           the tools the agent can call
+│   ├── main.py            FastAPI app, accounts, chat history, Handsome Dan
+│   │                      and the setup commands. Run this one with uvicorn.
+│   ├── agent.py           the agent (prompt + model + tools) and the audit trail
+│   ├── tools.py           catalogue data, shop perks, and the agent's tools
 │   ├── models.py          Pydantic types
-│   ├── prompts/prompt.md  the system prompt
-│   ├── auth.py            accounts and password hashing
-│   ├── db.py              read-only catalogue access
-│   ├── history.py         chat history for signed-in shoppers
-│   ├── perks.py           discounts, purchases and ratings
-│   ├── mascot.py          Handsome Dan's discount line
-│   ├── audit.py           the append-only audit trail
-│   ├── schema.py          migration for the Problem 9 tables
-│   └── cutouts.py         background removal for product photos
+│   └── prompts/
+│       └── prompt.md      the system prompt
 └── output/
     ├── harness.md         how the whole system works
     ├── design.md          the styling pass
-    ├── usability.md       the Problem 9 improvements
+    ├── usability.md       the usability improvements
     ├── app_check.html     live-site test report (open it in a browser)
     ├── app_check_images/  screenshots linked from app_check.html
-    ├── screenshots/       supporting screenshots referenced by harness.md
     └── audit_trail.json   append-only record of agent runs
 ```
 
-**The agent itself is four files**: `backend/prompts/prompt.md`, `backend/agent.py`, `backend/tools.py`, and `backend/models.py`. The rest of `backend/` is the shop around it.
+**The agent itself is four files**: `backend/prompts/prompt.md`, `backend/agent.py`, `backend/tools.py`, and `backend/models.py`. `main.py` is the API around it.
 
 Start with **[output/harness.md](output/harness.md)** for how the system fits together, or open **[output/app_check.html](output/app_check.html)** in a browser to see it working.
 

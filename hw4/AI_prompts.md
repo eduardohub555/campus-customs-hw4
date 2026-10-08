@@ -55,7 +55,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **What was lacking:** the first build left the form inputs overflowing past the right edge of the white card, and the only password rule was a minimum length.
 
-**What the follow-up changed:** the card went from 440px to 520px wide, and the real cause of the overflow was fixed — the form's grid children kept their default intrinsic input width because they had no `min-width: 0`, so the inputs sized themselves wider than their track. Every field now sits inside the card at both 1440px and 390px, checked against the card's measured bounds. Two password rules were added — at least one number and at least one special character (anything that is not a letter, digit or space) — enforced in `backend/auth.py` and mirrored as a live checklist on the form that ticks as you type, with submit disabled until all three rules pass.
+**What the follow-up changed:** the card went from 440px to 520px wide, and the real cause of the overflow was fixed — the form's grid children kept their default intrinsic input width because they had no `min-width: 0`, so the inputs sized themselves wider than their track. Every field now sits inside the card at both 1440px and 390px, checked against the card's measured bounds. Two password rules were added — at least one number and at least one special character (anything that is not a letter, digit or space) — enforced in `backend/main.py` and mirrored as a live checklist on the form that ticks as you type, with submit disabled until all three rules pass.
 
 **Evidence:** the running site, [harness.md](output/harness.md) section 3.
 
@@ -134,7 +134,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Evidence:** the running site, [harness.md](output/harness.md) section 7.
 
-**The guest rule is structural, not a check.** Every function in `backend/history.py` takes a `user_id` as its first argument, so there is no code path that can store a turn without one — an anonymous conversation leaves nothing behind by construction rather than by remembering to test for it. Verified by sending three messages as a guest and counting rows before and after: 38, then 38.
+**The guest rule is structural, not a check.** Every chat-history function takes a `user_id` as its first argument, so there is no code path that can store a turn without one — an anonymous conversation leaves nothing behind by construction rather than by remembering to test for it. Verified by sending three messages as a guest and counting rows before and after: 38, then 38.
 
 **Keyed on `user_id`, not name or email.** You suggested name and email as identifiers; they are what the agent uses to *recognise and address* the shopper, but the rows are filed under the integer primary key. A name is not unique and an email can change; the key cannot, and it is already the foreign key the table was built around.
 
@@ -191,7 +191,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Evidence:** the running site, [design.md](output/design.md), and [harness.md](output/harness.md) section 2.5.
 
-**The floating products are real background removal, not a CSS trick.** `backend/cutouts.py` writes a transparent PNG per garment; the API serves those and falls back to the original photo if a cutout is ever missing. The flood runs inward **from the border** rather than thresholding on colour — that distinction is what keeps the white YALE lettering on a navy hoodie, which a "remove everything white" pass would have erased.
+**The floating products are real background removal, not a CSS trick.** The cutout builder (`python main.py --cutouts`) writes a transparent PNG per garment; the API serves those and falls back to the original photo if a cutout is ever missing. The flood runs inward **from the border** rather than thresholding on colour — that distinction is what keeps the white YALE lettering on a navy hoodie, which a "remove everything white" pass would have erased.
 
 **Three refinements came from looking at the output, not from planning:** a one-pixel erosion to kill the white halo where a garment was shot against black; an opening to drop leftover speckle (checked against hoodie drawstrings, which survive); and a tolerance ladder with a quality gate that inspects the middle of the frame and retries more tightly when the flood leaked into the garment. Four photos needed the ladder. All 102 now cut cleanly.
 

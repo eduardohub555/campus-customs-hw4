@@ -1,4 +1,4 @@
-"""The Campus Customs shop assistant.
+"""The Campus Customs shop assistant, and the audit trail of its runs.
 
 Wires three things together and nothing else:
 
@@ -8,14 +8,26 @@ Wires three things together and nothing else:
 
 ``main.py`` calls :func:`answer`; everything about how the assistant thinks
 lives here and in the prompt file.
+
+Every run also leaves a record in ``output/audit_trail.json``. That file is
+**append-only**: the existing records are read before anything is written and
+are always written back, the write is atomic, and a file that will not parse is
+moved aside rather than discarded. It holds no personal data — a shopper is
+``user:1`` or ``guest``, never a name or an email.
 """
 
 from __future__ import annotations
 
+import json
+import logging
+import shutil
+import threading
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelMessage, ModelRequest, ModelResponse, TextPart, UserPromptPart
@@ -23,11 +35,142 @@ from pydantic_ai.models.openai import OpenAIResponsesModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.usage import UsageLimits
 
-import audit
-import db
-import perks
 import tools
 from models import AgentReply, PageContext
+
+# ===========================================================================
+# the audit trail
+# ===========================================================================
+
+AUDIT_PATH = Path(__file__).resolve().parent.parent / "output" / "audit_trail.json"
+
+# Arguments and results are summaries for an auditor to scan, not a second copy
+# of the database.
+MAX_FIELD = 220
+
+# pydantic-ai delivers the structured answer through an internal tool. It is
+# kept in `steps` so the trail is complete, but left out of `tools_called`,
+# which is meant to read as the shop tools the agent actually reached for.
+INTERNAL_TOOLS = {"final_result"}
+
+_LOCK = threading.Lock()
+
+
+def _audit_now() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _audit_short(value: Any, limit: int = MAX_FIELD) -> str:
+    """One readable line, truncated, whatever was passed in."""
+    if value is None:
+        return ""
+    if isinstance(value, (dict, list)):
+        try:
+            text = json.dumps(value, default=str)
+        except (TypeError, ValueError):
+            text = str(value)
+    else:
+        text = str(value)
+    text = " ".join(text.split())
+    return text if len(text) <= limit else text[: limit - 3] + "..."
+
+
+def _audit_load() -> list[dict[str, Any]]:
+    """Every record written so far. Never returns an empty list on error."""
+    if not AUDIT_PATH.exists():
+        return []
+    try:
+        data = json.loads(AUDIT_PATH.read_text(encoding="utf-8"))
+        if isinstance(data, list):
+            return data
+        logging.warning("Audit trail was not a list; keeping it aside")
+    except json.JSONDecodeError:
+        logging.warning("Audit trail could not be parsed; keeping it aside")
+
+    # Do not discard: move the old file out of the way so it can be recovered.
+    spoiled = AUDIT_PATH.with_suffix(f".corrupt-{datetime.now(timezone.utc):%Y%m%d%H%M%S}.json")
+    shutil.copy2(AUDIT_PATH, spoiled)
+    return []
+
+
+def _audit_append(record: dict[str, Any]) -> None:
+    """Add one record, keeping everything already written."""
+    with _LOCK:
+        records = _audit_load()
+        records.append(record)
+        AUDIT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        tmp = AUDIT_PATH.with_suffix(".tmp")
+        tmp.write_text(json.dumps(records, indent=2), encoding="utf-8")
+        tmp.replace(AUDIT_PATH)  # atomic, so a crash cannot truncate the trail
+
+
+def _audit_steps_from(messages: list[Any]) -> list[dict[str, Any]]:
+    """Read the tool calls and their results out of one agent run.
+
+    Each call is matched to its own return by tool_call_id, so a step records
+    what was asked of a tool and what that same call gave back.
+    """
+    calls: dict[str, dict[str, Any]] = {}
+    order: list[str] = []
+
+    for message in messages:
+        for part in getattr(message, "parts", []):
+            kind = type(part).__name__
+            if kind == "ToolCallPart":
+                key = getattr(part, "tool_call_id", None) or f"{part.tool_name}-{len(order)}"
+                calls[key] = {
+                    "tool": part.tool_name,
+                    "args": _audit_short(getattr(part, "args", None)),
+                    "result": "",
+                }
+                order.append(key)
+            elif kind == "ToolReturnPart":
+                key = getattr(part, "tool_call_id", None)
+                if key in calls:
+                    calls[key]["result"] = _audit_short(getattr(part, "content", None))
+
+    return [
+        {"step": i + 1, **calls[key]} for i, key in enumerate(order) if key in calls
+    ]
+
+
+def _audit_record_run(
+    *,
+    user_id: int | None,
+    message: str,
+    page: dict[str, Any] | None,
+    steps: list[dict[str, Any]],
+    stop_reason: str,
+    reply: str,
+    product_ids: list[str],
+    model: str,
+    seconds: float,
+    requests: int | None = None,
+) -> None:
+    """Write one agent run to the trail."""
+    _audit_append(
+        {
+            "time": _audit_now(),
+            # Identity is the key only. No name, no email: an audit file should
+            # not become a second place where personal data lives.
+            "shopper": f"user:{user_id}" if user_id else "guest",
+            "model": model,
+            "message": _audit_short(message),
+            "page": _audit_short(page) if page else "",
+            "steps": steps,
+            "tools_called": [s["tool"] for s in steps if s["tool"] not in INTERNAL_TOOLS],
+            "stop_reason": stop_reason,
+            "model_requests": requests,
+            "reply": _audit_short(reply),
+            "products_shown": product_ids,
+            "duration_seconds": round(seconds, 2),
+        }
+    )
+
+
+# ===========================================================================
+# the agent
+# ===========================================================================
 
 PROMPT_PATH = Path(__file__).resolve().parent / "prompts" / "prompt.md"
 
@@ -144,7 +287,7 @@ def build_agent() -> Agent[ShopperContext, AgentReply]:
         """
         if not ctx.deps.user_id:
             return "Not recorded: the shopper is not signed in."
-        if perks.record_interest(ctx.deps.user_id, note.strip() or None):
+        if tools.record_interest(ctx.deps.user_id, note.strip() or None):
             return "Recorded their interest in the discount."
         return "Nothing to record: this shopper has no discount offer."
 
@@ -156,7 +299,7 @@ def build_agent() -> Agent[ShopperContext, AgentReply]:
             return ""
 
         if page.product_id:
-            row = db.get_product(page.product_id)
+            row = tools.product_row(page.product_id)
             if row is not None:
                 return (
                     "The shopper is looking at the page for "
@@ -230,7 +373,7 @@ async def answer(
             usage_limits=UsageLimits(request_limit=MAX_REQUESTS),
         )
         reply = result.output
-        steps = audit.steps_from(result.new_messages())
+        steps = _audit_steps_from(result.new_messages())
         requests = getattr(result.usage, "requests", None)
         if requests and requests >= MAX_REQUESTS:
             stop_reason = f"request limit reached ({MAX_REQUESTS})"
@@ -239,7 +382,7 @@ async def answer(
         stop_reason = f"error: {type(error).__name__}"
         raise
     finally:
-        audit.record_run(
+        _audit_record_run(
             user_id=deps.user_id,
             message=message,
             page=deps.page.model_dump() if deps.page else None,
