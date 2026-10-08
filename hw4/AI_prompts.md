@@ -241,4 +241,19 @@ The evidence for this homework is the running site, the database writes, and the
 
 **One operational gotcha worth knowing.** Those two fixes appeared not to work — because `uvicorn --reload` watches `*.py` only, so editing `prompts/prompt.md` does **not** restart the server and the agent keeps serving the cached prompt. The run command is now `--reload --reload-include "*.md"`, and the trap is written into the harness so it does not cost anyone else a confusing round of testing.
 
+## Problem 13 — Push to GitHub and Submit the URL
+
+**Prompt 1 (initial):**
+> Problem 13: Push to GitHub and submit the URL. Put the code in a folder named hw4 and push it to a public GitHub repository. I will submit the repo URL to canvas myself, and I need you to give me this repo URL (the link that graders can open and clone). Do not put my real .env, campus_customs.db, or product images in the GitHub repo. Use .gitignore. Include .env.example with placeholders only. The expected file layout is attached in the image, as well as the Local-only data pack (not in git). The agent itself is four files under backend/ : prompts/prompt.md, agent.py, tools.py, and models.py . README.md should explain how to run the front end and back end after placing the data pack
+
+**Follow-up prompt:** None needed. The initial prompt supplied the layout picture, the repository name and visibility, the three things to keep out, the placeholder env file, and what the README had to explain.
+
+**Evidence:** **https://github.com/eduardohub555/campus-customs-hw4** — public, 93 files, verified by cloning it fresh and checking the layout from a grader's point of view.
+
+**Nothing sensitive was published.** Before the first commit the staged tree was swept for the real Portkey key, the Outlook identifiers, any `.db` file, the `data/` pack, `node_modules` and `.venv` — none present. The clone was then re-checked after pushing, confirming the same.
+
+**One real disclosure caught before publishing.** An email-shaped sweep of the staged files turned up the professor's genuine Yale address, `tauhid.zaman@yale.edu`. It had come out of the seeded `users` table and into harness.md section 1.3 as a worked example. Publishing a third party's real address in a public repository is not something to do quietly, so it was replaced with "a seeded account" in both the repository and your working copy; the table's point was the row count and the date, not the address. Your own `eduardo@campuscustoms.yale.edu` was left in, since it is your shop test account rather than a contactable inbox — easy to mask too if you would rather.
+
+**Two deliberate additions to the layout in the picture:** `output/screenshots/` and `funny_joke.txt`. Both are cited as evidence by documents that are in the layout — harness.md links to the screenshots throughout, and AI_prompts.md Problem 1 cites the joke file — so dropping them would leave broken references. Both are easy to remove if the layout is meant to be exact.
+
 <!-- Add one new "## Problem N — Title" section below for each problem, following the same structure. -->
