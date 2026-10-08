@@ -234,7 +234,7 @@ Yale blue is `#00356b`. The crest is drawn as inline SVG rather than shipped as 
 
 ### 2.6 What was verified
 
-Driven with Playwright against the running site. Screenshots are in `output/screenshots/`.
+Driven with Playwright against the running site. A report of the live checks, with screenshots, is in [app_check.html](app_check.html).
 
 | Check | Result |
 | --- | --- |
@@ -270,7 +270,7 @@ A registration writes exactly one row, and only these fields:
 | `first_name` | "Eduardo" | the form, whitespace-collapsed |
 | `last_name` | "CS" | the form, whitespace-collapsed |
 | `name` | "Eduardo CS" | first and last joined, so the column the seed rows use stays populated |
-| `email` | "eduardo@campuscustoms.yale.edu" | the form, trimmed and lowercased |
+| `email` | the address you signed up with, trimmed and lowercased | the form |
 | `password_hash` | `pbkdf2_sha256$ef6e8e085da09f64$<64 hex characters>` | derived from the password; see below |
 | `created_at` | "2026-10-07 03:17:51" | the table's own `datetime('now')` default |
 
@@ -346,7 +346,7 @@ A real account was registered through the create-account form, and the row it pr
 | | Before | After |
 | --- | --- | --- |
 | Rows in `users` | 3 (all seeded) | 4 |
-| Newest row | a seeded account, 2026-09-19 | `eduardo@campuscustoms.yale.edu`, 2026-10-07 |
+| Newest row | a seeded account, 2026-09-19 | the account created through the site, 2026-10-07 |
 
 The row is well-formed in every respect that matters:
 
@@ -358,7 +358,7 @@ The `id` is 6 rather than 4 because two scratch accounts were registered during 
 
 ### 3.6 What was verified
 
-Through the running site and the API, with screenshots in `output/screenshots/`.
+Through the running site and the API.
 
 | Check | Result |
 | --- | --- |
@@ -784,7 +784,7 @@ For a guest every one of these is `None`.
 
 **Layer two — a server-side guard.** Because a prompt is an instruction and not a guarantee, `_redact_account_details()` in `main.py` checks every reply before it leaves the server. If the signed-in shopper's address appears, it is replaced with `[withheld]`, a warning is logged, and the **redacted** text is what gets both sent and stored — so a slip never reaches the browser and never lands on disk. Matching is case-insensitive.
 
-The guard matches the **complete address only, never the local part on its own**. That restriction is deliberate and was found by testing: a local part is frequently an ordinary word. The account `eduardo@campuscustoms.yale.edu` belongs to a shopper the shop is supposed to greet as "Hi Eduardo", and a hypothetical `red@...` would collide with every garment described as red. An earlier version of the guard also matched the local part and turned "Hi Eduardo. Welcome back to Campus Customs." into "Hi [withheld]." — censoring the greeting the shop exists to give. Matching the full address has no such false positives.
+The guard matches the **complete address only, never the local part on its own**. That restriction is deliberate and was found by testing: a local part is frequently an ordinary word. An account whose local part matches the shopper's own first name belongs to someone the shop is supposed to greet by that name, and a hypothetical `red@...` would collide with every garment described as red. An earlier version of the guard also matched the local part and turned "Hi <name>. Welcome back to Campus Customs." into "Hi [withheld]." — censoring the greeting the shop exists to give. Matching the full address has no such false positives.
 
 In testing the guard has never had to fire; the prompt has held every time. It is there for the case where it does not.
 

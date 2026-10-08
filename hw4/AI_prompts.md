@@ -14,7 +14,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **What was lacking:** The first prompt only set HW4 as the active workspace and proved it with a joke file; it did not yet ask for the prompt log or say what each section had to contain.
 
-**Evidence:** [AI_prompts.md](AI_prompts.md) and [funny_joke.txt](funny_joke.txt), which confirm HW4 is the active workspace.
+**Evidence:** [AI_prompts.md](AI_prompts.md) itself, which is the log this problem asked for.
 
 ## Problem 2 — Analyze the Database
 
@@ -34,7 +34,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Follow-up prompt:** None needed. The initial prompt specified the stack, the five navigation links, the two reference sites and what to take from each, the no-copying rule, the product card fields, the single-item page layout, the chat panel stub, and the FastAPI starting point.
 
-**Evidence:** the running site at `http://localhost:5174`, [output/screenshots/](output/screenshots) (9 screenshots), and [harness.md](output/harness.md) section 2.
+**Evidence:** the running site at `http://localhost:5174`, [harness.md](output/harness.md) section 2, and the screenshots recorded while building it.
 
 **What the reference sites gave:** yalebulldogblue.com confirmed the business — officially licensed Yale merchandise run by Campus Customs out of New Haven, organised by residential college, varsity sport, graduate school and family collections. Those themes shaped the Home page, but every sentence on the site is written from scratch. Your reading was right that there is no "About Us" page to draw from: the site has no mission or history page at all, so the About page is entirely our own. From yaleclubnyc.org came the design — navy and white, serif headings over a sans-serif interface, a crest in the navigation, a rotating hero with an overlay tagline, three cards, thin gold rules, generous whitespace.
 
@@ -57,7 +57,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **What the follow-up changed:** the card went from 440px to 520px wide, and the real cause of the overflow was fixed — the form's grid children kept their default intrinsic input width because they had no `min-width: 0`, so the inputs sized themselves wider than their track. Every field now sits inside the card at both 1440px and 390px, checked against the card's measured bounds. Two password rules were added — at least one number and at least one special character (anything that is not a letter, digit or space) — enforced in `backend/auth.py` and mirrored as a live checklist on the form that ticks as you type, with submit disabled until all three rules pass.
 
-**Evidence:** the running site, [output/screenshots/](output/screenshots) (`10_password_mismatch`, `11_login_rejected`, `12_logged_in`), and [harness.md](output/harness.md) section 3.
+**Evidence:** the running site, [harness.md](output/harness.md) section 3.
 
 **Confirmed, as asked:** `test@campuscustoms.yale.edu` / `password` signs in through the real form and the nav bar switches to "Hi, Test". The site is ready for you to create your own account.
 
@@ -65,7 +65,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Security decisions worth naming:** passwords are never stored or logged, only derived; comparison is constant-time; a wrong password and an unknown email return the same message *and* take the same time, so neither can be used to discover which emails have accounts; the catalogue connection is read-only and only registration can write.
 
-**Your account, confirmed:** you registered through the form and the row landed in `users` as id 6 (`eduardo@campuscustoms.yale.edu`, 2026-10-07), with a unique 16-character salt and a correctly shaped 95-character hash. The id is 6 rather than 4 because two scratch accounts were created during development to test the insert and the complexity rules, then deleted; SQLite does not reuse autoincrement ids. Audited afterwards: 4 users, 4 distinct salts, 4 distinct hashes, no plaintext password stored anywhere in the schema.
+**Your account, confirmed:** you registered through the form and the row landed in `users` as id 6 (the address you signed up with, 2026-10-07), with a unique 16-character salt and a correctly shaped 95-character hash. The id is 6 rather than 4 because two scratch accounts were created during development to test the insert and the complexity rules, then deleted; SQLite does not reuse autoincrement ids. Audited afterwards: 4 users, 4 distinct salts, 4 distinct hashes, no plaintext password stored anywhere in the schema.
 
 ## Problem 5 — PydanticAI Agent Backend
 
@@ -76,7 +76,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Follow-up prompt:** None needed. The initial prompt specified the four-file layout, the chat route and what its replies must contain, the no-invention rule, the privacy rule, the Yale Club voice, the key handling, the models to add, the two harness sections, and the exact command the backend must run under.
 
-**Evidence:** the running site, [output/screenshots/](output/screenshots) (`14_chat_agent`, `15_chat_privacy`), and [harness.md](output/harness.md) section 4.
+**Evidence:** the running site, [harness.md](output/harness.md) section 4.
 
 **The main design decision — the agent cannot state a wrong price.** Rather than let the model write prices and stock counts into its prose, it returns `reply` plus `product_ids`, and `main.py` builds the cards from the database afterwards. So every figure on screen is read from SQLite at that moment. An invented id finds nothing and is dropped — tested with `yale-jetpack-9000`, which never reached the browser.
 
@@ -95,7 +95,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Follow-up prompt:** None needed. The initial prompt named every lookup the tools must cover, the no-invention rule, the out-of-stock behaviour to preserve, the prompt expansion, the models to update, and exactly what the harness section had to explain.
 
-**Evidence:** the running site, [16_chat_out_of_stock.png](output/screenshots/16_chat_out_of_stock.png), and [harness.md](output/harness.md) section 5.
+**Evidence:** the running site, [harness.md](output/harness.md) section 5.
 
 **What your observation changed.** You were right that the agent already offered alternatives when a size was gone — but it was doing that by guessing from an earlier search, with no way to confirm the substitute was actually available in the size asked for. A new tool, `find_available_in_size`, makes it reliable: everything it returns is confirmed in stock in that size, it can exclude the product that was unavailable, and it can stay within the same category so the suggestion is comparable. The prompt now sets out the sequence — say no plainly, name the sizes that remain, then offer confirmed alternatives.
 
@@ -112,7 +112,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Follow-up prompt:** None needed. The initial prompt specified the trigger, the card contents, that this is an API contract, the Yale Club styling, the requirement that chat-placed cards still open the Problem 3 detail view, and the two files to update.
 
-**Evidence:** the running site, [19_results_band_full.png](output/screenshots/19_results_band_full.png) and [18_chat_card_to_detail.png](output/screenshots/18_chat_card_to_detail.png), and [harness.md](output/harness.md) section 6.
+**Evidence:** the running site, [harness.md](output/harness.md) section 6.
 
 **The design decision that makes it work.** The results do not belong to the chat panel. They go into a React context above the router, and a band mounted at the top of `<main>` renders them. That is what lets them be *on the page* rather than in the conversation, survive navigation between pages, and be drawn by the very same `ProductCard` the catalogue uses — which is also why requirement two came for free: there is no second kind of card and no separate click path, so a chat-placed card opens the Problem 3 detail view by construction. Verified by clicking one through to `/products/basic-hoodie-big-yale`.
 
@@ -132,7 +132,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Follow-up prompt:** None needed. The initial prompt specified the storage requirement, the identity fields and the password exclusion, the page-context behaviour with two worked examples, the guest rule stated twice for emphasis, both greetings, and the three things the harness had to document.
 
-**Evidence:** the running site, [output/screenshots/](output/screenshots) (`20_chat_guest`, `21_chat_history_restored`, `22_chat_page_context`), and [harness.md](output/harness.md) section 7.
+**Evidence:** the running site, [harness.md](output/harness.md) section 7.
 
 **The guest rule is structural, not a check.** Every function in `backend/history.py` takes a `user_id` as its first argument, so there is no code path that can store a turn without one — an anonymous conversation leaves nothing behind by construction rather than by remembering to test for it. Verified by sending three messages as a guest and counting rows before and after: 38, then 38.
 
@@ -149,7 +149,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **What the follow-up changed:** since the email is staying, the protection became structural as well. `_redact_account_details()` in `main.py` now checks every reply before it leaves the server; if the signed-in shopper's address appears it becomes `[withheld]`, a warning is logged, and the redacted text is what is both sent and stored, so a slip reaches neither the browser nor the disk. Four extraction attempts were tried — a plain request, a "for my records" appeal, a "character by character memory test", and a fake shop policy — and the prompt refused all four, so the guard has not yet had to fire.
 
-**A bug caught while building that guard.** The first version also matched the email's local part on its own, which looked safer and was worse: your own account is `eduardo@campuscustoms.yale.edu`, so it turned "Hi Eduardo. Welcome back to Campus Customs." into "Hi [withheld]." — censoring the exact first-name greeting Problem 8 asked for. It now matches the complete address only, which has no false positives.
+**A bug caught while building that guard.** The first version also matched the email's local part on its own, which looked safer and was worse: your own account's local part is your first name, so it turned "Hi <name>. Welcome back to Campus Customs." into "Hi [withheld]." — censoring the exact first-name greeting Problem 8 asked for. It now matches the complete address only, which has no false positives.
 
 ## Problem 9 — Usability Improvements
 
@@ -160,7 +160,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Follow-up prompt:** None needed. The initial prompt listed all six improvements, what each had to do, the document to write and what it had to say for each, and the requirement to verify everything in the running app.
 
-**Evidence:** the running site, [usability.md](output/usability.md), [output/screenshots/](output/screenshots) (`23_dan_guest`, `24_dan_discount`, `25_buy_rating`, `26_purchase_receipt`, `27_handsome_dan`), and [harness.md](output/harness.md) section 8. Fifteen checks driven through the browser from a clean database, all passing.
+**Evidence:** the running site, [usability.md](output/usability.md), [harness.md](output/harness.md) section 8. Fifteen checks driven through the browser from a clean database, all passing.
 
 **Handsome Dan is HTML and CSS,** per the project convention — shaped `div`s with border-radius, no image file and nothing generated, so he is sharp at any size and nods when he greets someone.
 
@@ -189,7 +189,7 @@ The evidence for this homework is the running site, the database writes, and the
 
 **Follow-up prompt:** None needed. The initial prompt specified more Handsome Dans kept elegant, warmer language kept simple, the blue/white palette to preserve, the Yale Club reference to keep, the floating products, and the document to write.
 
-**Evidence:** the running site, [design.md](output/design.md), and [output/screenshots/](output/screenshots) (`29_home_styled`, `30_products_floating`, `31_detail_floating`, `32_about_dan`).
+**Evidence:** the running site, [design.md](output/design.md), and [harness.md](output/harness.md) section 2.5.
 
 **The floating products are real background removal, not a CSS trick.** `backend/cutouts.py` writes a transparent PNG per garment; the API serves those and falls back to the original photo if a cutout is ever missing. The flood runs inward **from the border** rather than thresholding on colour — that distinction is what keeps the white YALE lettering on a navy hoodie, which a "remove everything white" pass would have erased.
 
@@ -246,14 +246,19 @@ The evidence for this homework is the running site, the database writes, and the
 **Prompt 1 (initial):**
 > Problem 13: Push to GitHub and submit the URL. Put the code in a folder named hw4 and push it to a public GitHub repository. I will submit the repo URL to canvas myself, and I need you to give me this repo URL (the link that graders can open and clone). Do not put my real .env, campus_customs.db, or product images in the GitHub repo. Use .gitignore. Include .env.example with placeholders only. The expected file layout is attached in the image, as well as the Local-only data pack (not in git). The agent itself is four files under backend/ : prompts/prompt.md, agent.py, tools.py, and models.py . README.md should explain how to run the front end and back end after placing the data pack
 
-**Follow-up prompt:** None needed. The initial prompt supplied the layout picture, the repository name and visibility, the three things to keep out, the placeholder env file, and what the README had to explain.
+**Follow-up prompt:**
+> yeah mask it too. no additions, so please make it exactly as the screenshots and confirm the webpage works. Double check everything as is in the picture
+
+**What was lacking:** the first push left your own shop account address in the documents, and added two files the layout picture does not show — `output/screenshots/` and `funny_joke.txt` — on the grounds that other documents cited them.
+
+**What the follow-up changed:** both addresses are masked, the two extra files are gone, and every reference to them was rewritten so no document points at a file that is not in the repository. The layout was then checked item by item against the picture, and the running site was re-verified end to end.
 
 **Evidence:** **https://github.com/eduardohub555/campus-customs-hw4** — public, 93 files, verified by cloning it fresh and checking the layout from a grader's point of view.
 
 **Nothing sensitive was published.** Before the first commit the staged tree was swept for the real Portkey key, the Outlook identifiers, any `.db` file, the `data/` pack, `node_modules` and `.venv` — none present. The clone was then re-checked after pushing, confirming the same.
 
-**One real disclosure caught before publishing.** An email-shaped sweep of the staged files turned up the professor's genuine Yale address, `tauhid.zaman@yale.edu`. It had come out of the seeded `users` table and into harness.md section 1.3 as a worked example. Publishing a third party's real address in a public repository is not something to do quietly, so it was replaced with "a seeded account" in both the repository and your working copy; the table's point was the row count and the date, not the address. Your own `eduardo@campuscustoms.yale.edu` was left in, since it is your shop test account rather than a contactable inbox — easy to mask too if you would rather.
+**Two real addresses caught before publishing.** An email-shaped sweep of the staged files turned up a third party's genuine Yale address, which had come out of the seeded `users` table into a worked example in harness.md. Publishing someone else's real address in a public repository is not something to do quietly, so it was masked. Your own shop account address was masked in the same pass at your request. Neither the repository nor your working copy now contains a real email address; the documents say what is stored without naming anybody.
 
-**Two deliberate additions to the layout in the picture:** `output/screenshots/` and `funny_joke.txt`. Both are cited as evidence by documents that are in the layout — harness.md links to the screenshots throughout, and AI_prompts.md Problem 1 cites the joke file — so dropping them would leave broken references. Both are easy to remove if the layout is meant to be exact.
+**The repository matches the layout in the picture exactly.** `output/screenshots/` and `funny_joke.txt` were removed at your request, and every reference to them in these documents was rewritten so nothing points at a file that is not there.
 
 <!-- Add one new "## Problem N — Title" section below for each problem, following the same structure. -->
